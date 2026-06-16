@@ -15,14 +15,38 @@ import {
   Settings
 } from 'lucide-react';
 
+type Service = {
+  id: 'triagem' | 'consulta' | 'farmacia' | 'vacina';
+  name: string;
+  icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+  prefix: string;
+};
+
+type Ticket = {
+  id: number;
+  number: string;
+  service: Service['id'];
+  serviceName: string;
+  isPriority: boolean;
+  status: 'waiting' | 'called' | 'completed';
+  createdAt: Date;
+  calledAt: Date | null;
+};
+
+type CurrentCall = {
+  ticket: string;
+  desk: string;
+  time: Date;
+};
+
 export default function App() {
-  const [activeView, setActiveView] = useState('dashboard'); // dashboard, kiosk, panel
-  const [tickets, setTickets] = useState([]);
-  const [ticketCounter, setTicketCounter] = useState(1);
-  const [currentCall, setCurrentCall] = useState(null);
+  const [activeView, setActiveView] = useState<'dashboard' | 'kiosk' | 'panel'>('dashboard'); // dashboard, kiosk, panel
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [ticketCounter, setTicketCounter] = useState<number>(1);
+  const [currentCall, setCurrentCall] = useState<CurrentCall | null>(null);
 
   // Definicoes de servicos baseados nas necessidades da UBS
-  const services = [
+  const services: Service[] = [
     { id: 'triagem', name: 'Triagem / Acolhimento', icon: Activity, prefix: 'TR' },
     { id: 'consulta', name: 'Consulta Médica', icon: Stethoscope, prefix: 'CM' },
     { id: 'farmacia', name: 'Retirada de Medicamentos', icon: Pill, prefix: 'FA' },
@@ -30,12 +54,17 @@ export default function App() {
   ];
 
   // Funcao para gerar nova senha (Totem)
-  const generateTicket = (serviceId, isPriority) => {
+  const generateTicket = (serviceId: Service['id'], isPriority: boolean) => {
     const service = services.find(s => s.id === serviceId);
+    if (!service) {
+      alert('Serviço inválido.');
+      return;
+    }
+
     const priorityPrefix = isPriority ? 'P' : 'N';
     const ticketNumber = `${service.prefix}-${priorityPrefix}${String(ticketCounter).padStart(3, '0')}`;
     
-    const newTicket = {
+    const newTicket: Ticket = {
       id: Date.now(),
       number: ticketNumber,
       service: serviceId,
@@ -52,8 +81,8 @@ export default function App() {
   };
 
   // Funcao para chamar o proximo paciente (Dashboard da Equipe)
-  const callNext = (serviceId) => {
-    const waitingTickets = tickets.filter(t => t.service === serviceId && t.status === 'waiting');
+  const callNext = (serviceId: Service['id']) => {
+    const waitingTickets = tickets.filter((t: Ticket) => t.service === serviceId && t.status === 'waiting');
     
     if (waitingTickets.length === 0) {
       alert('Nenhum paciente aguardando para este serviço.');
@@ -61,33 +90,39 @@ export default function App() {
     }
 
     // Prioriza senhas preferenciais e depois por ordem de chegada
-    waitingTickets.sort((a, b) => {
+    waitingTickets.sort((a: Ticket, b: Ticket) => {
       if (a.isPriority && !b.isPriority) return -1;
       if (!a.isPriority && b.isPriority) return 1;
-      return a.createdAt - b.createdAt;
+      return a.createdAt.getTime() - b.createdAt.getTime();
     });
 
     const ticketToCall = waitingTickets[0];
     
-    const updatedTickets = tickets.map(t => 
-      t.id === ticketToCall.id ? { ...t, status: 'called', calledAt: new Date() } : t
-    );
+  // CORREÇÃO 1: Adicionamos ": Ticket[]" aqui nesta variável também!
+  const updatedTickets: Ticket[] = tickets.map((t: Ticket) => 
+    t.id === ticketToCall.id ? { ...t, status: 'called', calledAt: new Date() } : t
+  );
 
-    setTickets(updatedTickets);
-    setCurrentCall({
-      ticket: ticketToCall.number,
-      desk: `Guichê / Sala de ${services.find(s => s.id === serviceId).name}`,
-      time: new Date()
-    });
-  };
+  setTickets(updatedTickets); // Agora o TypeScript aceita isso sem reclamar!
+  
+  // CORREÇÃO 2 (Segurança): Trocamos o ! pelo ?. para evitar tela branca
+  const currentService = services.find(s => s.id === serviceId);
+  
+  setCurrentCall({
+    ticket: ticketToCall.number,
+    desk: `Guichê / Sala de ${currentService?.name || 'Desconhecida'}`,
+    time: new Date()
+  });
+};
 
-  // Funcao para finalizar atendimento
-  const completeTicket = (ticketId) => {
-    const updatedTickets = tickets.map(t => 
-      t.id === ticketId ? { ...t, status: 'completed' } : t
-    );
-    setTickets(updatedTickets);
-  };
+// Funcao para finalizar atendimento (Essa já estava perfeita!)
+const completeTicket = (ticketId: number) => {
+  // Adicione ": Ticket[]" logo após a declaração da variável
+  const updatedTickets: Ticket[] = tickets.map((t: Ticket) => 
+    t.id === ticketId ? { ...t, status: 'completed' } : t
+  );
+  setTickets(updatedTickets);
+};
 
   // Componente: Navegacao Superior
   const Navigation = () => (
@@ -128,13 +163,14 @@ export default function App() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {services.map((service) => {
+        {services.map((service: Service) => {
           const Icon = service.icon;
           return (
             <div key={service.id} className="border-2 border-gray-200 rounded-lg p-6 hover:border-blue-500 transition-colors">
               <div className="flex items-center gap-4 mb-6">
                 <div className="bg-blue-100 p-3 rounded-full text-blue-700">
-                  <Icon size={32} />
+                  {/* Substituição feita aqui: width e height no lugar de size */}
+                  <Icon width={32} height={32} />
                 </div>
                 <h3 className="text-xl font-semibold text-gray-700">{service.name}</h3>
               </div>
@@ -161,7 +197,7 @@ export default function App() {
 
   // Componente: Visao do Painel de Espera (Panel)
   const PanelView = () => {
-    const calledTickets = tickets.filter(t => t.status === 'called').sort((a, b) => b.calledAt - a.calledAt);
+    const calledTickets = tickets.filter((t: Ticket) => t.status === 'called').sort((a: Ticket, b: Ticket) => b.calledAt!.getTime() - a.calledAt!.getTime());
     const lastCalled = currentCall;
     const history = calledTickets.slice(1, 5); // ultimos 4 chamados
 
