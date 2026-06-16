@@ -1,4 +1,6 @@
-Sistema de Gestão de Fluxo e Acolhimento - UBSEste projeto foi desenvolvido como parte do Projeto Integrador (Grupo 25) - Faculdade Microlins, focado na "Redução das Filas de Atendimento no SUS".O sistema soluciona as dores identificadas na pesquisa de campo, especificamente a falta de informação e o gargalo na triagem (Conforme relatado na Seção 3.2 e 6.1 do documento oficial do projeto), fornecendo uma solução tecnológica distribuída em três terminais:
+Sistema de Gestão de Fluxo e Acolhimento - UBS
+
+Este projeto foi desenvolvido como parte do Projeto Integrador (Grupo 25) - Faculdade Microlins, focado na "Redução das Filas de Atendimento no SUS".O sistema soluciona as dores identificadas na pesquisa de campo, especificamente a falta de informação e o gargalo na triagem (Conforme relatado na Seção 3.2 e 6.1 do documento oficial do projeto), fornecendo uma solução tecnológica distribuída em três terminais:
 
 Totem de Autoatendimento: Para pacientes retirarem senhas.
 
