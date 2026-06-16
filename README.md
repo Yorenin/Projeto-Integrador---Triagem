@@ -35,7 +35,9 @@ No arquivo src/index.css, substitua tudo por estas 3 linhas:@tailwind base;
 @tailwind utilities;
 6. Substituir o Código PrincipalCole todo o código gerado no arquivo src/App.jsx.6. Executar o Sistemanpm run dev
 
-Como Testar o Sistema em "Rede" (Simulação)O diferencial deste protótipo é que ele sincroniza as informações automaticamente sem precisar de um banco de dados complexo (Back-end) para fins de apresentação.Inicie o servidor (npm run dev) e abra o link gerado (geralmente http://localhost:5173). Abra este mesmo link em três abas diferentes do navegador. Em cada aba, escolha uma máquina diferente: Aba 1: Clique em "Totem de Senhas" Aba 2: Clique em "Painel de Espera" Aba 3: Clique em "Recepção / Triagem" Gere uma senha no Totem e observe que ela aparecerá instantaneamente como "aguardando" no Painel da Recepção!
+Como Testar o Sistema em "Rede" (Simulação)O diferencial deste protótipo é que ele sincroniza as informações automaticamente sem precisar de um banco de dados complexo (Back-end) para fins de apresentação.Inicie o servidor (npm run dev) e abra o link gerado (geralmente http://localhost:5173). Abra este mesmo link em três abas diferentes do navegador. Em cada aba, escolha uma máquina diferente: Aba 1: Clique em "Totem de Senhas" Aba 2: Clique em "Painel de Espera" Aba 3: Clique em "Recepção / Triagem" Gere uma senha no Totem e observe que ela aparecerá instantaneamente como "aguardando" no Painel da Recepção.
+
+Este código no GitHub é o nosso MVP (Produto Mínimo Viável). Na implantação física, o React seria empacotado para web, hospedado no servidor municipal e acessado por Mini-PCs acoplados a totens com impressoras térmicas e televisores com Raspberry Pi, rodando os navegadores em Modo Quiosque. A comunicação entre eles seria feita por uma API real conectada ao e-SUS.
 
 📚 Fontes do Regras de Negócio: Atendimento e prioridades baseados nas diretrizes do SUS e FIOCRUZ.
 
