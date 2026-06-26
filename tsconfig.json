@@ -17,6 +17,6 @@
     "jsx": "react-jsx",
     "types": ["vite/client"]
   },
-  "include": ["src", "sistema_de_gest_o_de_fluxo_ubs.tsx"],
+  "include": ["src", "src/sistema_de_gest_o_de_fluxo_ubs.tsx"],
   "exclude": ["node_modules", "dist"]
 }
